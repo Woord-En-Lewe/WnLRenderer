@@ -2,8 +2,8 @@
 #include <GLFW/glfw3.h>
 #include <fmt/format.h>
 #include <glad/gles2.h>
-#include <renderer.h>
-#include <window.h>
+#include <wnlrenderer/renderer.h>
+#include <wnlrenderer/window.h>
 
 #include <cstddef>
 #include <cstdlib>

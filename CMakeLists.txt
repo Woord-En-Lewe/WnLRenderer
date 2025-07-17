@@ -28,12 +28,47 @@ if (LINTERS)
     endif()
 endif()
 
+
 add_subdirectory(vendor)
+
+add_library(renderer INTERFACE)
+
+target_include_directories(renderer
+    INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
+        $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(renderer
+    INTERFACE
+        fmt::fmt
+        glfw
+        glm::glm
+
+        glad
+)
+
+set_target_properties(renderer PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED YES
+)
+
+
+target_sources(renderer
+    PUBLIC FILE_SET HEADERS
+    BASE_DIRS "${CMAKE_SOURCE_DIR}/include"
+    FILES
+        "include/wnlrenderer/renderer.h"
+        "include/wnlrenderer/window.h"
+)
+
+
 add_subdirectory(src)
+
 
 install(TARGETS renderer glm glm-header-only
     EXPORT renderer-targets
-    FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/renderer
+    FILE_SET HEADERS DESTINATION include
 )
 
 install(EXPORT renderer-targets
