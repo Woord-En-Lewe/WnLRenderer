@@ -455,12 +455,25 @@ constexpr PositionTopLeft_t PositionTopLeft{};
 constexpr PositionCenter_t PositionCenter{};
 
 template <int format = GL_RGBA>
-    requires(format == GL_RGBA || format == GL_RGB)
+    requires(format == GL_RGBA || format == GL_RGB || format == GL_RED)
 struct Renderable {
     Renderable(std::shared_ptr<Mesh> mesh,
                std::shared_ptr<Texture<format>> texture)
+        requires(format != GL_RED)
         : mesh_(std::move(mesh))
-        , texture_(std::move(texture))
+        , texture_y(std::move(texture))
+        , transform_(1.0F) {
+    }
+
+    Renderable(std::shared_ptr<Mesh> mesh,
+               std::shared_ptr<Texture<format>> texture_y,
+               std::shared_ptr<Texture<format>> texture_u,
+               std::shared_ptr<Texture<format>> texture_v)
+        requires(format == GL_RED)
+        : mesh_(std::move(mesh))
+        , texture_y(std::move(texture_y))
+        , texture_u(std::move(texture_u))
+        , texture_v(std::move(texture_v))
         , transform_(1.0F) {
     }
 
@@ -483,7 +496,9 @@ struct Renderable {
         dirty_ = true;
     }
 
-    auto draw(ShaderProgram& shader) {
+    auto draw(ShaderProgram& shader)
+        requires(format != GL_RED)
+    {
         if (dirty_) {
             glm::mat4 transMatrix = glm::translate(glm::mat4(1.0F), position_);
             glm::mat4 scaleMatrix = glm::scale(
@@ -492,7 +507,29 @@ struct Renderable {
             transform_ = transMatrix * scaleMatrix;
         }
         glActiveTexture(GL_TEXTURE0);
-        texture_->bind();
+        texture_y->bind();
+        shader.set_int("u_texture", 0);
+        shader.set_mat4("u_Transform", transform_);
+        mesh_->draw();
+    }
+
+    auto draw(ShaderProgram& shader)
+        requires(format == GL_RED)
+    {
+        if (dirty_) {
+            glm::mat4 transMatrix = glm::translate(glm::mat4(1.0F), position_);
+            glm::mat4 scaleMatrix = glm::scale(
+                glm::mat4(1.0F), glm::vec3(scale_.x, scale_.y, 0.0F));
+
+            transform_ = transMatrix * scaleMatrix;
+        }
+        glActiveTexture(GL_TEXTURE0);
+        texture_y->bind();
+        glActiveTexture(GL_TEXTURE1);
+        texture_u->bind();
+        glActiveTexture(GL_TEXTURE2);
+        texture_v->bind();
+
         shader.set_int("u_texture", 0);
         shader.set_mat4("u_Transform", transform_);
         mesh_->draw();
@@ -517,7 +554,9 @@ struct Renderable {
 
 private:
     std::shared_ptr<Mesh> mesh_;
-    std::shared_ptr<Texture<format>> texture_;
+    std::shared_ptr<Texture<format>> texture_y;
+    std::shared_ptr<Texture<format>> texture_u;
+    std::shared_ptr<Texture<format>> texture_v;
 
     glm::vec3 position_;
     glm::vec2 scale_;
