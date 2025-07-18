@@ -3,7 +3,7 @@
 #include <fmt/format.h>
 #include <glad/gles2.h>
 #include <wnlrenderer/renderer.h>
-#include <wnlrenderer/window.h>
+#include <window.h>
 
 #include <cstddef>
 #include <cstdlib>

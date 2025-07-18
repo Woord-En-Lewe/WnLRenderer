@@ -42,7 +42,6 @@ target_include_directories(renderer
 target_link_libraries(renderer
     INTERFACE
         fmt::fmt
-        glfw
         glm::glm
 
         glad
@@ -58,7 +57,6 @@ target_sources(renderer
     PUBLIC FILE_SET HEADERS
     FILES
         "include/wnlrenderer/renderer.h"
-        "include/wnlrenderer/window.h"
 )
 
 
