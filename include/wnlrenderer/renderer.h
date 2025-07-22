@@ -599,7 +599,7 @@ struct Renderable {
         return std::make_tuple(texture_y, texture_u, texture_v);
     }
 
-    auto get_format() const -> int {
+    constexpr auto get_format() const -> int {
         return format;
     }
 
