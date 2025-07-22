@@ -552,6 +552,21 @@ struct Renderable {
         return std::make_pair(std::round(top_left_x), std::round(top_left_y));
     }
 
+    auto get_texture() -> std::shared_ptr<Texture<format>>
+        requires(format != GL_RED)
+    {
+        return texture_y;
+    }
+
+    auto get_texture()
+        -> std::tuple<std::shared_ptr<Texture<format>>,  // TODO: Stronger types
+                      std::shared_ptr<Texture<format>>,
+                      std::shared_ptr<Texture<format>>>
+        requires(format == GL_RED)
+    {
+        return std::make_tuple(texture_y, texture_u, texture_v);
+    }
+
 private:
     std::shared_ptr<Mesh> mesh_;
     std::shared_ptr<Texture<format>> texture_y;
