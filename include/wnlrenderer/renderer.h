@@ -448,6 +448,23 @@ private:
     std::shared_ptr<renderer::IndexBuffer> index_buffer_;
 };
 
+// NOLINTBEGIN
+constexpr std::array<renderer::Vertex const, 4> vertices{
+    // Positions from -0.5 to 0.5       // UV Coords
+    renderer::Vertex{ {-0.5f, 0.5f, 0.0f}, {0.0f, 1.0f}}, // Top-left
+    renderer::Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}}, // Bottom-left
+    renderer::Vertex{  {0.5f, 0.5f, 0.0f}, {1.0f, 1.0f}}, // Top-right
+    renderer::Vertex{ {0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}}  // Bottom-right
+};
+// NOLINTEND
+
+constexpr std::array<uint32_t, 6> indices{
+    0, 1, 2,  // First Triangle
+    2, 1, 3   // Second Triangle
+};
+
+static Mesh quad_mesh{vertices, indices};
+
 struct PositionTopLeft_t {};
 struct PositionCenter_t {};
 
