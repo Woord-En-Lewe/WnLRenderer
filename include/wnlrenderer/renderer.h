@@ -513,7 +513,7 @@ struct Renderable {
         dirty_ = true;
     }
 
-    auto draw(ShaderProgram& shader)
+    auto draw(ShaderProgram& shader) -> void
         requires(format != GL_RED)
     {
         if (dirty_) {
@@ -530,7 +530,7 @@ struct Renderable {
         mesh_->draw();
     }
 
-    auto draw(ShaderProgram& shader)
+    auto draw(ShaderProgram& shader) -> void
         requires(format == GL_RED)
     {
         if (dirty_) {
@@ -552,16 +552,17 @@ struct Renderable {
         mesh_->draw();
     }
 
-    auto get_size() -> std::pair<uint32_t, uint32_t> {  // TODO: Stronger types
+    auto get_size() const
+        -> std::pair<uint32_t, uint32_t> {  // TODO: Stronger types
         return std::make_pair(std::round(scale_.x), std::round(scale_.y));
     }
 
-    auto get_position(PositionCenter_t /*unused*/)
+    auto get_position(PositionCenter_t /*unused*/) const
         -> std::pair<uint32_t, uint32_t> {  // TODO: Stronger types
         return std::make_pair(std::round(position_.x), std::round(position_.y));
     }
 
-    auto get_position(PositionTopLeft_t /*unused*/)
+    auto get_position(PositionTopLeft_t /*unused*/) const
         -> std::pair<uint32_t, uint32_t> {  // TODO: Stronger types
         float top_left_x = position_.x - (scale_.x / 2.0F);
         float top_left_y = position_.y - (scale_.y / 2.0F);
@@ -569,13 +570,13 @@ struct Renderable {
         return std::make_pair(std::round(top_left_x), std::round(top_left_y));
     }
 
-    auto get_texture() -> std::shared_ptr<Texture<format>>
+    auto get_texture() const -> std::shared_ptr<Texture<format>>
         requires(format != GL_RED)
     {
         return texture_y;
     }
 
-    auto get_texture()
+    auto get_texture() const
         -> std::tuple<std::shared_ptr<Texture<format>>,  // TODO: Stronger types
                       std::shared_ptr<Texture<format>>,
                       std::shared_ptr<Texture<format>>>
@@ -584,7 +585,7 @@ struct Renderable {
         return std::make_tuple(texture_y, texture_u, texture_v);
     }
 
-    auto get_format() -> int {
+    auto get_format() const -> int {
         return format;
     }
 
