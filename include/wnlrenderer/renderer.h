@@ -567,6 +567,10 @@ struct Renderable {
         return std::make_tuple(texture_y, texture_u, texture_v);
     }
 
+    auto get_format() -> int {
+        return format;
+    }
+
 private:
     std::shared_ptr<Mesh> mesh_;
     std::shared_ptr<Texture<format>> texture_y;
