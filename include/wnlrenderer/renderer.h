@@ -363,6 +363,7 @@ struct Texture {
     auto copy_data(std::span<std::byte const> data) {
         bind();
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo_);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         void* gpuMemory = glMapBufferRange(
             GL_PIXEL_UNPACK_BUFFER, 0, static_cast<GLsizeiptr>(data.size()),
             GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
