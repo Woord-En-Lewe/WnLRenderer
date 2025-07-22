@@ -559,7 +559,9 @@ struct Renderable {
         glActiveTexture(GL_TEXTURE2);
         texture_v->bind();
 
-        shader.set_int("u_texture", 0);
+        shader.set_int("u_texture_y", 0);
+        shader.set_int("u_texture_u", 1);
+        shader.set_int("u_texture_v", 2);
         shader.set_mat4("u_Transform", transform_);
         mesh_->draw();
     }
