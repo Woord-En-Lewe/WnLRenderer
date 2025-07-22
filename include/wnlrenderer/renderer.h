@@ -331,10 +331,6 @@ struct Texture {
             buffer_size_ = static_cast<size_t>(width_ * height_ * 1);
         }
         glGenBuffers(1, &pbo_);
-        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo_);
-        glBufferData(GL_PIXEL_UNPACK_BUFFER, buffer_size_, nullptr,
-                     GL_STREAM_DRAW);
-        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
         glGenTextures(1, &textureId_);
         bind();
 
@@ -378,13 +374,8 @@ struct Texture {
             glPixelStorei(GL_UNPACK_ROW_LENGTH, pitch / bytes_per_pixel);
         }
 
-        void* gpuMemory = glMapBufferRange(
-            GL_PIXEL_UNPACK_BUFFER, 0, static_cast<GLsizeiptr>(data.size()),
-            GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
-        if (gpuMemory != nullptr) {
-            std::memcpy(gpuMemory, data.data(), data.size());
-            glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
-        }
+        glBufferData(GL_PIXEL_UNPACK_BUFFER, data.size(), data.data(),
+                     GL_STREAM_DRAW);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width_, height_, format,
                         GL_UNSIGNED_BYTE, static_cast<void*>(nullptr));
 

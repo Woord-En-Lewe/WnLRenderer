@@ -69,7 +69,7 @@ int main() {
         std::ranges::fill(textureData, 0U | (255U << 24) | (128U << 16) |
                                            (255U << 8) | (128U << 0));
         auto tex = std::make_shared<renderer::Texture<GL_RGBA>>(800, 600);
-        tex->copy_data(std::as_bytes(std::span{textureData}));
+        tex->copy_data(std::as_bytes(std::span{textureData}), 800);
 
         renderer::Renderable square{quad, tex};
         auto w = 200.0F;
