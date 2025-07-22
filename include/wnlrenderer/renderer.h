@@ -360,10 +360,24 @@ struct Texture {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    auto copy_data(std::span<std::byte const> data) {
+    auto copy_data(std::span<std::byte const> data, int pitch) {
         bind();
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo_);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+        int bytes_per_pixel = 0;
+        if constexpr (format == GL_RGBA) {
+            bytes_per_pixel = 4;
+        } else if constexpr (format == GL_RGB) {
+            bytes_per_pixel = 3;
+        } else if constexpr (format == GL_RED) {
+            bytes_per_pixel = 1;
+        }
+
+        if (bytes_per_pixel > 0 && pitch > 0) {
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, pitch / bytes_per_pixel);
+        }
+
         void* gpuMemory = glMapBufferRange(
             GL_PIXEL_UNPACK_BUFFER, 0, static_cast<GLsizeiptr>(data.size()),
             GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
@@ -374,6 +388,7 @@ struct Texture {
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width_, height_, format,
                         GL_UNSIGNED_BYTE, static_cast<void*>(nullptr));
 
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
