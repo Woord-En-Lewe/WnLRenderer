@@ -463,7 +463,9 @@ constexpr std::array<uint32_t, 6> indices{
     2, 1, 3   // Second Triangle
 };
 
-static Mesh quad_mesh{vertices, indices};
+inline auto QuadMesh() -> Mesh {
+    return {vertices, indices};
+}
 
 struct PositionTopLeft_t {};
 struct PositionCenter_t {};
