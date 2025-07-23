@@ -242,7 +242,10 @@ struct VertexAttribElement {
 struct VertexBufferLayout {
     template <typename T>
     auto push(size_t count, size_t offset) {
+        /*
         static_assert(false, "Unknown type pushed to VertexBufferLayout");
+        */
+        throw std::runtime_error("Unknown type pushed to VertexBufferLayout");
     }
 
     template <>
